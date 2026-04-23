@@ -4,7 +4,6 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Load model
 model = pickle.load(open("model.pkl", "rb"))
 
 @app.route("/", methods=["GET", "POST"])
@@ -13,17 +12,29 @@ def home():
 
     if request.method == "POST":
         try:
-            features = []
+            features = [
+                float(request.form["f1"]),
+                float(request.form["f2"]),
+                float(request.form["f3"]),
+                float(request.form["f4"]),
+                float(request.form["f5"]),
+                float(request.form["f6"]),
+                float(request.form["f7"]),
+                float(request.form["f8"]),
+                float(request.form["f9"]),
+                float(request.form["f10"]),
+                float(request.form["f11"]),
+                float(request.form["f12"]),
+                float(request.form["f13"]),
+                float(request.form["f14"]),
+                float(request.form["f15"]),
+                float(request.form["f16"]),
+                float(request.form["f17"]),
+                float(request.form["f18"]),
+                float(request.form["f19"])
+            ]
 
-            # 🔥 19 FEATURES INPUT
-            for i in range(1, 20):
-                val = float(request.form.get(f"f{i}", 0))
-                features.append(val)
-
-            final_features = np.array([features])
-
-            prediction = model.predict(final_features)
-
+            prediction = model.predict([features])
             result = prediction[0]
 
         except Exception as e:
