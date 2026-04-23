@@ -12,30 +12,41 @@ def home():
 
     if request.method == "POST":
         try:
-            features = [
-                float(request.form["f1"]),
-                float(request.form["f2"]),
-                float(request.form["f3"]),
-                float(request.form["f4"]),
-                float(request.form["f5"]),
-                float(request.form["f6"]),
-                float(request.form["f7"]),
-                float(request.form["f8"]),
-                float(request.form["f9"]),
-                float(request.form["f10"]),
-                float(request.form["f11"]),
-                float(request.form["f12"]),
-                float(request.form["f13"]),
-                float(request.form["f14"]),
-                float(request.form["f15"]),
-                float(request.form["f16"]),
-                float(request.form["f17"]),
-                float(request.form["f18"]),
-                float(request.form["f19"])
-            ]
+            # 🧠 USER INPUTS
+            home = request.form["home"]
+            intent = request.form["intent"]
 
-            prediction = model.predict([features])
-            result = prediction[0]
+            loan_grade = float(request.form["loan_grade"])
+            default = 1 if request.form["default"] == "Yes" else 0
+            emp_length = float(request.form["emp_length"])
+            loan_percent_income = float(request.form["loan_percent_income"])
+            credit_hist = float(request.form["credit_hist"])
+
+            age = float(request.form["age"])
+            income = float(request.form["income"])
+            loan_amount = float(request.form["loan_amount"])
+            interest = float(request.form["interest"])
+
+            # 🔥 ONE HOT ENCODING (AUTO)
+            home_map = ["MORTGAGE", "OTHER", "OWN", "RENT"]
+            intent_map = ["DEBTCONSOLIDATION", "EDUCATION", "HOMEIMPROVEMENT",
+                          "MEDICAL", "PERSONAL", "VENTURE"]
+
+            home_encoded = [1 if home == val else 0 for val in home_map]
+            intent_encoded = [1 if intent == val else 0 for val in intent_map]
+
+            # FINAL FEATURE VECTOR (ORDER MUST MATCH MODEL)
+            features = (
+                home_encoded +
+                intent_encoded +
+                [loan_grade, default, emp_length,
+                 loan_percent_income, credit_hist,
+                 age, income, loan_amount, interest]
+            )
+
+            prediction = model.predict([features])[0]
+
+            result = "High Risk ❌" if prediction == 1 else "Low Risk ✅"
 
         except Exception as e:
             result = str(e)
